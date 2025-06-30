@@ -40,6 +40,29 @@ std::vector<std::string> PokemonNames = {
     "Drowzee", "Hypno", "Krabby", "Kingler", "Voltorb"
 };
 
+std::vector<std::string> abilityNames = {
+	"Flame Burst", "Aqua Jet", "Thunder Fang", "Shadow Claw", "Solar Beam",
+	"Ice Shard", "Dragon Breath", "Iron Tail", "Leaf Blade", "Psychic Blast",
+	"Stone Edge", "Venom Strike", "Steel Wing", "Dark Pulse", "Fairy Wind",
+	"Earthquake", "Blizzard", "Hydro Pump", "Inferno", "Air Slash",
+	"Bug Buzz", "Power Gem", "Moonlight", "Night Slash", "Energy Ball",
+	"Poison Jab", "Cross Chop", "Zen Headbutt", "Surf", "Fire Spin",
+	"Spark", "Dazzling Gleam", "Leech Seed", "Bone Rush", "Magnet Bomb",
+	"Sky Attack", "Crunch", "Flash Cannon", "Hyper Beam", "Toxic Spikes",
+	"Brick Break", "Shadow Ball", "Solar Flare", "Ice Beam", "Aerial Ace",
+	"Lava Plume", "Petal Dance", "Quick Attack", "Thunderbolt", "Water Pulse",
+	"Iron Defense", "Sludge Wave", "Draco Meteor", "Double Kick", "Horn Drill",
+	"Rock Slide", "Night Shade", "U-turn", "Acid Armor", "Bullet Seed",
+	"Psybeam", "Focus Blast", "Smokescreen", "Dragon Claw", "Aura Sphere",
+	"Mach Punch", "Sky Uppercut", "Hurricane", "Mud Shot", "Leaf Storm",
+	"Volt Tackle", "Bubble Beam", "Fire Fang", "Stun Spore", "Air Cutter",
+	"Nasty Plot", "Iron Head", "Tail Glow", "Charge Beam", "Heat Wave",
+	"Metal Sound", "Seed Bomb", "Phantom Force", "Roost", "X-Scissor",
+	"Frost Breath", "Magical Leaf", "Power Whip", "Gunk Shot", "Bounce",
+	"Mirror Shot", "Poison Fang", "Discharge", "Dragon Dance", "Swords Dance",
+	"Haze", "Glare", "Thunder Wave", "Mega Punch", "Shadow Sneak", "Psychic Terrain"
+};
+
 //The list where you will store all the pokemon the player has caught
 std::vector<Pokemon> PersonalPokemon = {};
 
@@ -69,14 +92,29 @@ void MainMenu();
 void SwitchPokemon(int NumberInDeck);
 void AdjustDeck();
 void SelectFightPokemon();
+void FightOver(int win);
+void GenerateRandomPersonal();
+void AutoAdjustPersonalDeck();
 
-
+int MainChoice;
 int main()
 {
-	CreatePersonalPokemon();
+	std::cout << "1: Create your pokemon \n2: Randomly Generate your pokemon"<<std::endl;
+	std::cin >> MainChoice;
+	switch (MainChoice)
+	{
+		case 1:
+			CreatePersonalPokemon();
+			break;
+		case 2:
+			GenerateRandomPersonal();
+			break;
+		default:
+			std::cout << "You have choosen and invalid option" << std::endl;
+			main();
+	}
 
 	MainMenu();
-
 }
 
 
@@ -135,15 +173,41 @@ void CreatePersonalPokemon()
 }
 
 
+void GenerateRandomPersonal()
+{
+	std::srand(time(0));
+	Random.health = std::rand() % 350;
+	Random.Ability1 = std::rand() % 50;
+	Random.Abilty1Name = abilityNames[std::rand() % abilityNames.size()];
+	Random.Ability2 = std::rand() % 80;
+	Random.Abilty2Name = abilityNames[std::rand() % abilityNames.size()];
+	Random.Ability3 = std::rand() % 100;
+	Random.Abilty3Name = abilityNames[std::rand() % abilityNames.size()];
+	Random.Defense = std::rand() % 100;
+	Random.Name = PokemonNames[std::rand() % 99];
+	Random.ult = std::rand() % 500;
+	Random.UltName = abilityNames[std::rand() % abilityNames.size()];
+	AttackingPokemon.push_back(Random);
+	PersonalPokemon.push_back(Random);
+}
+
+
 void GenerateAttackingPokemon()
 {
 	std::srand(time(0));
 	Random.health = std::rand() % 350;
 	Random.Ability1 = std::rand() % 50;
+	Random.Abilty1Name = abilityNames[std::rand() % abilityNames.size()];
 	Random.Ability2 = std::rand() % 80;
+	Random.Abilty2Name = abilityNames[std::rand() % abilityNames.size()];
 	Random.Ability3 = std::rand() % 100;
+	Random.Abilty3Name = abilityNames[std::rand() % abilityNames.size()];
 	Random.Defense = std::rand() % 100;
 	Random.Name = PokemonNames[std::rand() % 99];
+	Random.ult = std::rand() % 500;
+	Random.UltName = abilityNames[std::rand() % abilityNames.size()];
+	AttackingPokemon.push_back(Random);
+	fight();
 }
 
 
@@ -278,6 +342,7 @@ void PlayerTurn()
 	{
 		std::cout << "CONGRATS!"<<std::endl;
 		std::cout << "You have defeated the attacking pokemon."<<std::endl;
+		FightOver(1);
 	}
 	Player.ultcharge = Player.ultcharge + 25;
 	BotTurn();
@@ -301,6 +366,7 @@ void BotTurn()
 	switch (FirstOption)
 	{
 		case 1:
+		{
 			//attack
 			std::srand(std::time(nullptr));
 			int AttackChoice = rand()%3;
@@ -321,21 +387,25 @@ void BotTurn()
 				break;
 			}
 
-			float Effectivity = (EffectivityOfAttack = 75) ? .75 : (EffectivityOfAttack = 85) ? .85 : 1.00;
-			int damage = damage * Effectivity;
+			int effective = EffectivityOfAttack();
+			float Effectivity = (effective = 75) ? .75 : (effective = 85) ? .85 : 1.00;
+			damage = damage * Effectivity;
 			std::cout << Enemy.Name << " Used " << attackname << " and did " << damage << "."<<std::endl;
 		break;
-
-
-
+		}
 		case 2:
 			std::srand(std::time(nullptr));
-			int AmountOfDefense = srand()%Enemy.Defense();
+			int AmountOfDefense = rand()%Enemy.Defense;
 			Enemy.DefenseActive = Enemy.DefenseActive + AmountOfDefense;
 			std::cout << Enemy.Name << " used " << AmountOfDefense << " defense and now has " << Enemy.DefenseActive << " active defense" << std::endl;
 		break;
 	}
-
+	if (Personal.health<=0)
+	{
+		std::cout << "You have died and lost to this pokemon" <<std::endl;
+		FightOver(0);
+	}
+	fight();
 }
 
 
@@ -361,6 +431,8 @@ int EffectivityOfAttack()
 
 void MainMenu()
 {
+
+	AutoAdjustPersonalDeck();
 	int Choice;
 	std::cout << "(1): Adjust personal deck"<<std::endl;
 	std::cout << "(2): Fight random pokemon"<<std::endl;
@@ -371,7 +443,19 @@ void MainMenu()
 	switch (Choice)
 	{
 		case 1:
+		{
 		    AdjustDeck();
+			break;
+		}
+		case 2:
+		{
+			//First you generate the random pokemon then you jump to fighting
+			GenerateAttackingPokemon();
+		}
+		case 3:
+		{
+			break;
+		}
 	}
 }
 
@@ -478,4 +562,49 @@ void SelectFightPokemon()
 		}
 	}
 	
+}
+
+
+void FightOver(int win)
+{
+	//1 = Win
+	//0 = lose
+
+	switch (win)
+	{
+		case 0: 
+		//lose
+		{
+			AttackingPokemon.clear();
+			break;
+		}
+		case 1:
+		//win
+		{
+			PersonalPokemon.push_back(AttackingPokemon[0]);
+			if (PersonalPokemon.size()<=3)
+			{
+				PersonalDeck.clear();
+				for (int i=0;i<PersonalPokemon.size();i++)
+				{
+					PersonalDeck.push_back(i);
+				}
+			}
+			AttackingPokemon.clear();
+		}
+	}
+}
+
+
+
+void AutoAdjustPersonalDeck()
+{
+	if (PersonalPokemon.size()<=3)
+	{
+		PersonalDeck.clear();
+		for (int i=0;i<PersonalPokemon.size();i++)
+		{
+			PersonalDeck.push_back(i);
+		}
+	}
 }
