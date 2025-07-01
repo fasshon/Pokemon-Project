@@ -159,7 +159,7 @@ void CreatePersonalPokemon()
 	std::cin >> Personal.Abilty3Name;
 	std::cout << std::endl;
 
-
+	
 
 	std::cout << "Defense: " << std::endl;
 	std::cin >> Personal.Defense;
@@ -211,31 +211,46 @@ void GenerateAttackingPokemon()
 }
 
 
-
-
-int botattack = 0;
-int attack = 0;
 int damage;
 std::string attackname;
 
-int DefenseActive = 0;
-int BotDefenseActive = 0;
-
-
 int PokemonChoice;
+
+
 void fight()
 {
+
 	if (!SelectedPokemonBool)
 	{
 		SelectFightPokemon();
 	}
+	std::cout << "Personal: " <<std::endl;
+	std::cout << "       Health: " << SelectedPokemon[0].health << std::endl;
+	std::cout << "       Ability 1 damage and name: " << SelectedPokemon[0].Ability1 << " | "<< SelectedPokemon[0].Abilty1Name<<std::endl;
+	std::cout << "       Ability 2 damage and name: " << SelectedPokemon[0].Ability2 << " | "<< SelectedPokemon[0].Abilty2Name<<std::endl;
+	std::cout << "       Ability 3 damage and name: " << SelectedPokemon[0].Ability3 << " | "<< SelectedPokemon[0].Abilty3Name<<std::endl;
+	std::cout << "       Ult damage and name: " << SelectedPokemon[0].ult << " | " << SelectedPokemon[0].UltName << std::endl;
+	std::cout<<std::endl;
+	std::cout<<std::endl;
+	std::cout<<std::endl;
+	std::cout<<std::endl;
+	std::cout << "enemy: " <<std::endl;
+	std::cout << "       Health: " << AttackingPokemon[0].health << std::endl;
+	std::cout << "       Ability 1 damage and name: " << AttackingPokemon[0].Ability1 << " | "<< AttackingPokemon[0].Abilty1Name<<std::endl;
+	std::cout << "       Ability 2 damage and name: " << AttackingPokemon[0].Ability2 << " | "<< AttackingPokemon[0].Abilty2Name<<std::endl;
+	std::cout << "       Ability 3 damage and name: " << AttackingPokemon[0].Ability3 << " | "<< AttackingPokemon[0].Abilty3Name<<std::endl;
+	std::cout << "       Ult damage and name: " << AttackingPokemon[0].ult << " | " << AttackingPokemon[0].UltName << std::endl;
+	std::cout<<std::endl;
+	std::cout<<std::endl;
+	std::cout<<std::endl;
+21
 	PlayerTurn();
 
 };
 
 
 
-
+int attack;
 void PlayerTurn()
 {
 	Pokemon Player = SelectedPokemon[0];
@@ -258,10 +273,10 @@ void PlayerTurn()
 	case 1:
 	{	
 		int AttackChoice;
-		std::cout << "You are attacking";
-		std::cout << "Ability (1) | ("<<Player.Ability1<<")";
-		std::cout << "Ability (2) | ("<<Player.Ability2<<")";
-		std::cout << "Ability (3) | ("<<Player.Ability3<<")";
+		std::cout << "You are attacking"<<std::endl;
+		std::cout << "Ability (1) | ("<<Player.Ability1<<")"<<std::endl;
+		std::cout << "Ability (2) | ("<<Player.Ability2<<")"<<std::endl;
+		std::cout << "Ability (3) | ("<<Player.Ability3<<")"<<std::endl;
 		if (Player.ultcharge>=100)
 		{
 			std::cout << "ULT (4) | ("<<Player.ult<<")"<<std::endl;
@@ -353,7 +368,7 @@ void PlayerTurn()
 void BotTurn()
 {
 	Pokemon Enemy = AttackingPokemon[0];
-	Pokemon Player = SelectedPokemon[0];
+	Pokemon Player = SelectedPokemon[0]; 
 	
 	if (Enemy.ultcharge >= 100)
 	{
@@ -540,6 +555,7 @@ void SelectFightPokemon()
 	{
 		std::cout << "Currently 1 pokemon in personal deck"<<std::endl;
 		std::cout <<"Using: "<< PersonalPokemon[PersonalDeck[0]].Name <<std::endl;
+		SelectedPokemon.push_back(PersonalPokemon[PersonalDeck[0]]);
 	}
 	else
 	{
@@ -558,9 +574,10 @@ void SelectFightPokemon()
 		{
 			SelectedPokemon.push_back(PersonalPokemon[PersonalDeck[PokemonChoice]]);
 			SelectedPokemonBool = true;
-			
 		}
 	}
+	SelectedPokemonBool = true;
+	fight();
 	
 }
 
@@ -569,7 +586,6 @@ void FightOver(int win)
 {
 	//1 = Win
 	//0 = lose
-
 	switch (win)
 	{
 		case 0: 
